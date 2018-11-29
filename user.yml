@@ -1,0 +1,5 @@
+---
+- name: Creating user in servers
+  hosts: create-user
+  roles:
+    - create-user

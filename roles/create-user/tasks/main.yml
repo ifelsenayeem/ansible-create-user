@@ -1,0 +1,29 @@
+---
+  - name: Creating a user
+    user:
+      name: "{{user_name}}"
+      password: "{{user_password}}"
+      state: present
+      shell: /bin/bash
+      system: no
+      createhome: yes
+      home: "{{user_path}}"
+    sudo: yes
+
+  - name: Creating .ssh folder
+    become: true
+    file: path="{{user_path}}/.ssh" state=directory
+
+  - name: Adding ssh keys to user
+    become: true
+    template:
+      src: authorized_keys
+      dest: "{{user_path}}/.ssh/authorized_keys"
+
+  - name: Giving sudo access to user
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%{{user_name}}\s'
+      line: '%{{user_name}} ALL=(ALL) NOPASSWD: ALL'
+    sudo: yes
